@@ -1,9 +1,11 @@
 import { getPageBySlug, hasContentstackEnv } from '@/lib/contentstack';
+import { normalizePageSections } from '@/lib/normalizeSections';
+import { getSectionComponent } from '@/components/sections';
 
 export const revalidate = 60; // ISR demo; adjust as needed
 
 export default async function HomePage() {
-  let page = null;
+  let page: any = null; // eslint-disable-line @typescript-eslint/no-explicit-any
   if (hasContentstackEnv()) {
     try {
       page = await getPageBySlug('/', { cache: 60 });
@@ -12,23 +14,28 @@ export default async function HomePage() {
     }
   }
 
+  const instructions = normalizePageSections(page);
+
   return (
     <main className="min-h-screen bg-white">
-      <div className="container mx-auto px-4 py-8 space-y-6">
-        <h1 className="text-4xl font-bold text-gray-900">Home Page (CMS Raw JSON)</h1>
-        {!hasContentstackEnv() && (
-          <p className="text-red-600">
+      {!hasContentstackEnv() && (
+        <div className="bg-red-50 border-b border-red-200 py-3">
+          <div className="max-w-6xl mx-auto px-4 text-sm text-red-700">
             Missing Contentstack environment variables. Add them to <code>.env.local</code> to enable dynamic content.
-          </p>
-        )}
-        {page ? (
-          <pre className="bg-gray-100 text-gray-800 p-4 rounded text-sm overflow-x-auto">
-            {JSON.stringify(page, null, 2)}
-          </pre>
-        ) : (
-          <p className="text-gray-600">No page data returned.</p>
-        )}
-      </div>
+          </div>
+        </div>
+      )}
+      {instructions.length === 0 && (
+        <div className="max-w-6xl mx-auto px-4 py-10 text-gray-600">No sections to render.</div>
+      )}
+      {instructions.map((inst) => {
+        const Comp = getSectionComponent(inst.componentId);
+        return (
+          <div key={inst.key} className="border-b border-gray-100">
+            <Comp raw={inst.raw} />
+          </div>
+        );
+      })}
     </main>
   );
 }
