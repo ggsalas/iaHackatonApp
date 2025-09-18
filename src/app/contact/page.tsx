@@ -7,7 +7,9 @@ export default async function ContactPage() {
   if (hasContentstackEnv()) {
     try {
       page = await getPageBySlug('/contact', { cache: 60 });
-    } catch {}
+    } catch (_err) {
+      // Intentionally ignore: allow static fallback when CMS fetch fails
+    }
   }
 
   return (

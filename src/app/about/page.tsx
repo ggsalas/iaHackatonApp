@@ -7,7 +7,9 @@ export default async function AboutPage() {
   if (hasContentstackEnv()) {
     try {
       page = await getPageBySlug('/about', { cache: 60 });
-    } catch {}
+    } catch (_err) {
+      // Intentionally ignore: allow static fallback when CMS fetch fails
+    }
   }
 
   return (
