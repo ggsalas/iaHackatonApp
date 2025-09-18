@@ -160,3 +160,21 @@ export function hasContentstackEnv(): boolean {
       process.env.CONTENTSTACK_ENVIRONMENT,
   );
 }
+
+// Fetch a single entry by content type and entry UID
+export async function getEntry(
+  contentTypeUid: string,
+  entryUid: string,
+  options?: FetchOptions,
+): Promise<any | null> { // eslint-disable-line @typescript-eslint/no-explicit-any
+  try {
+    const data = await contentstackFetch<{ entry: any }>( // eslint-disable-line @typescript-eslint/no-explicit-any
+      `content_types/${contentTypeUid}/entries/${entryUid}`,
+      undefined,
+      options,
+    );
+    return data.entry || null;
+  } catch {
+    return null;
+  }
+}

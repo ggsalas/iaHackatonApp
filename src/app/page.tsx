@@ -1,5 +1,6 @@
 import { getPageBySlug, hasContentstackEnv } from '@/lib/contentstack';
 import { normalizePageSections } from '@/lib/normalizeSections';
+import { hydrateInstructions } from '@/lib/hydrateSections';
 import { getSectionComponent } from '@/components/sections';
 
 export const revalidate = 60; // ISR demo; adjust as needed
@@ -14,7 +15,8 @@ export default async function HomePage() {
     }
   }
 
-  const instructions = normalizePageSections(page);
+  const baseInstructions = normalizePageSections(page);
+  const hydrated = await hydrateInstructions(baseInstructions);
 
   return (
     <main className="min-h-screen bg-white">
@@ -25,14 +27,14 @@ export default async function HomePage() {
           </div>
         </div>
       )}
-      {instructions.length === 0 && (
+      {hydrated.length === 0 && (
         <div className="max-w-6xl mx-auto px-4 py-10 text-gray-600">No sections to render.</div>
       )}
-      {instructions.map((inst) => {
+      {hydrated.map((inst) => {
         const Comp = getSectionComponent(inst.componentId);
         return (
           <div key={inst.key} className="border-b border-gray-100">
-            <Comp raw={inst.raw} />
+            <Comp raw={inst.hydrated || inst.raw} />
           </div>
         );
       })}

@@ -4,11 +4,13 @@ interface FeaturesRawItem { [key: string]: any } // eslint-disable-line @typescr
 interface FeaturesRaw { items?: FeaturesRawItem[]; [key: string]: any } // eslint-disable-line @typescript-eslint/no-explicit-any
 
 export function Features({ raw }: { raw: FeaturesRaw }) {
-  const list = (raw as any)?.items || []; // eslint-disable-line @typescript-eslint/no-explicit-any
+  const r: any = raw; // eslint-disable-line @typescript-eslint/no-explicit-any
+  const list = r.items || r.features || r.cards || r.entries || [];
+  const title = r.title || r.heading || 'Features';
   return (
     <section className="py-16 bg-white">
       <div className="max-w-6xl mx-auto px-6">
-        <h2 className="text-3xl font-bold mb-8">Features</h2>
+        <h2 className="text-3xl font-bold mb-8">{title}</h2>
         <div className="grid gap-6 md:grid-cols-3">
           {list.map((item: any, i: number) => ( // eslint-disable-line @typescript-eslint/no-explicit-any
             <div key={i} className="p-5 border rounded shadow-sm bg-gray-50">
