@@ -1,4 +1,4 @@
-import { Hero } from './Hero';
+// Hero component removed; GenericContent covers hero behavior
 import { Features } from './Features';
 import { TrustBuilder } from './TrustBuilder';
 import { Testimonials } from './Testimonials';
@@ -8,7 +8,6 @@ import { BlogPosts } from './BlogPosts';
 import { GenericContent } from './GenericContent';
 
 export const registry = {
-  Hero,
   Features,
   TrustBuilder,
   Testimonials,

@@ -3,7 +3,6 @@
 // implementations are added under src/components/sections.
 
 export type SectionComponentId =
-  | 'Hero'
   | 'Features'
   | 'TrustBuilder'
   | 'Testimonials'

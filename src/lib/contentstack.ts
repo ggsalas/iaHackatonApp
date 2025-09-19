@@ -15,14 +15,6 @@ interface ContentstackSystemFields {
 }
 
 // Section Models (extend as needed)
-export interface HeroSection {
-  type: 'hero';
-  heading?: string;
-  subheading?: string;
-  ctaLabel?: string;
-  backgroundImageUrl?: string;
-}
-
 export interface FeaturesSectionFeature {
   title?: string;
   description?: string;
@@ -56,7 +48,6 @@ export interface TestimonialsSection {
 }
 
 export type Section =
-  | HeroSection
   | FeaturesSection
   | CtaSection
   | TestimonialsSection;

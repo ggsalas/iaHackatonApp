@@ -48,8 +48,7 @@ export function normalizePageSections(page: RawPageLike | null | undefined): Nor
 
     if (collected.length === 0) {
       // Attempt hero inference: first section + has background_image
-      const looksLikeHero = sectionIndex === 0 && sectionObj && typeof sectionObj === 'object' && 'background_image' in sectionObj;
-      const componentId = looksLikeHero ? 'Hero' : 'GenericContent';
+      const componentId = 'GenericContent';
       result.push({
         key: `section-${sectionIndex}-${componentId}`,
         componentId,
