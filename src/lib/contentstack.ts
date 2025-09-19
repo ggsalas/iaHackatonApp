@@ -1,3 +1,5 @@
+// Load local environment variables via dotenv in non-production
+import 'dotenv/config';
 type RevalidateOption = number | 'no-store';
 
 interface FetchOptions {
