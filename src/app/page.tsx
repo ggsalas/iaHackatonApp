@@ -15,6 +15,7 @@ export default async function HomePage() {
     }
   }
 
+  console.log('page........... ', page)
   const baseInstructions = normalizePageSections(page);
   const hydrated = await hydrateInstructions(baseInstructions);
 

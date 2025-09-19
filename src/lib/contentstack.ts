@@ -104,6 +104,15 @@ export async function contentstackFetch<T>(
   if (params) {
     Object.entries(params).forEach(([k, v]) => {
       if (v === undefined || v === null) return;
+      // Support repeated include[] params: key ends with [] and value is array
+      if (Array.isArray(v) && k.endsWith('[]')) {
+        v.forEach((item) => {
+          if (item !== undefined && item !== null) {
+            searchParams.append(k, String(item));
+          }
+        });
+        return;
+      }
       if (typeof v === 'object') {
         searchParams.set(k, JSON.stringify(v));
       } else {
@@ -147,6 +156,11 @@ export async function getPageBySlug(
     'content_types/page/entries',
     {
       query: { url: normalized },
+      'include[]': [
+        'sections.section',
+        'sections.section.content',
+        'sections.section.blueprint',
+      ],
     },
     options,
   );

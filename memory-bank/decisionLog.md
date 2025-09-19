@@ -13,3 +13,5 @@
 - `/public` stores static assets
 This structure promotes maintainability and follows the principles of separation of concerns. |
 | 2025-09-17 | Project initialization and dependency management approach | We'll use create-next-app to bootstrap the project with TypeScript and App Router support already configured. TailwindCSS, PostCSS, and autoprefixer will be installed as development dependencies. For UI components, we'll start with basic TailwindCSS utilities and only add shadcn/ui components as needed for more complex UI elements, keeping the bundle size lean. Dependencies will be installed using npm for better compatibility and error reporting. |
+| 2025-09-18 | (Superseded) Deep manual hydration for nested Contentstack references | Replaced by include[] expansion to simplify pipeline. Kept for historical context. |
+| 2025-09-19 | Use Contentstack include[] params for deep expansion (sections.section, .content, .blueprint) | Eliminates custom multi-phase hydration, reduces network round trips, guarantees fully populated nested entries on first server render, and simplifies component refactors. |
