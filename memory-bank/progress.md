@@ -1,4 +1,4 @@
-# Progress (Updated: 2025-09-19)
+# Progress (Updated: 2025-09-21)
 
 ## Done
 
@@ -9,17 +9,27 @@
 - Implemented section normalization (mapping `_content_type_uid` to components)
 - Adopted include[] deep expansion strategy (replacing manual hydration)
 - Updated fetch util to support repeated include[] params
+- Refactored Feature list (general_content_list) into Features component with card grid
+- Removed legacy Hero component (GenericContent now handles hero variant)
+- Implemented TrustBuilder component (dual images, signature block)
+- Fixed normalization to avoid flattening nested list items
 
 ## Doing
 
+- Home Page Section 4 (Social Proof) – planning & component spec
 - inc1 complete: include[] params added
 - Preparing inc2: fetch home page with deep includes to verify nested sections
 
 ## Next
 
-- inc2: Execute enriched home page fetch & inspect structure
-- inc3: Inventory sections (index, type UID, inferred component)
-- s0–s8: Sequential per-section analysis & refactor planning (pause after each)
+- Implement Social Proof stats component (decide variant detection vs new mapping)
+- Capabilities layout component design
+- Case Studies card list component design
+- Refactor Testimonials to styled quotes (grid or carousel)
+- Refactor Logos into uniform responsive strip
+- Refactor Team grid with headshots & roles
+- Implement Blog Feature (featured posts / cards)
+- inc2: Execute enriched home page fetch & inspect structure (if still needed)
 - cross1: Consolidate field extraction helpers
 - cross2: Extract design tokens from reference site
 - mb1: Log progress after each approved section refactor
