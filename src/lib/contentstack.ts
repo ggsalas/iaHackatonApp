@@ -152,6 +152,7 @@ export async function getPageBySlug(
       'include[]': [
         'sections.section',
         'sections.section.content',
+        'sections.section.content.content',
         'sections.section.blueprint',
       ],
     },

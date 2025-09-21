@@ -32,9 +32,25 @@ export default async function HomePage() {
       )}
       {hydrated.map((inst) => {
         const Comp = getSectionComponent(inst.componentId);
+        const baseRaw: any = inst.raw; // eslint-disable-line @typescript-eslint/no-explicit-any
+        const hyd: any = inst.hydrated; // eslint-disable-line @typescript-eslint/no-explicit-any
+        let merged = hyd ? { ...baseRaw, ...hyd } : baseRaw;
+        if (hyd && Array.isArray(baseRaw?.content) && Array.isArray(hyd?.content)) {
+          const hydLooksLikeRefs = hyd.content.length > 0 && hyd.content.every((c: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
+            const keys = Object.keys(c || {});
+            return keys.length <= 2 && keys.includes('uid') && keys.includes('_content_type_uid');
+          });
+          const baseHasExpanded = baseRaw.content.some((c: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
+            const keys = Object.keys(c || {});
+            return keys.length > 2;
+          });
+          if (hydLooksLikeRefs && baseHasExpanded) {
+            merged = { ...merged, content: baseRaw.content };
+          }
+        }
         return (
           <div key={inst.key} className="border-b border-gray-100">
-            <Comp raw={inst.hydrated || inst.raw} />
+            <Comp raw={merged} />
           </div>
         );
       })}
