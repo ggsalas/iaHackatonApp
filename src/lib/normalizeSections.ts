@@ -1,4 +1,4 @@
-import { mapContentType } from './contentTypeComponentMap';
+import { mapContentType, ignorableContentTypes } from './contentTypeComponentMap';
 
 export interface NormalizedSectionInstruction {
   key: string;
@@ -23,7 +23,12 @@ function collectContentTypeUids(node: unknown, out: { uid?: string; node: any }[
   }
   const obj = node as Record<string, unknown>;
   if (typeof obj._content_type_uid === 'string') {
-    out.push({ uid: obj._content_type_uid, node: obj });
+    const uid = obj._content_type_uid as string;
+    out.push({ uid, node: obj });
+    // Stop descending unless this is an ignorable wrapper we explicitly traverse through
+    if (!ignorableContentTypes.includes(uid)) {
+      return;
+    }
   }
   Object.values(obj).forEach((v) => collectContentTypeUids(v, out));
 }
@@ -47,7 +52,19 @@ export function normalizePageSections(page: RawPageLike | null | undefined): Nor
     collectContentTypeUids(sectionObj, collected);
 
     if (collected.length === 0) {
-      // Attempt hero inference: first section + has background_image
+      // If no embedded entries were discovered, attempt to map the wrapper key itself
+      if (wrapperKey) {
+        const mappedFromWrapper = mapContentType(wrapperKey);
+        if (mappedFromWrapper) {
+          result.push({
+            key: `section-${sectionIndex}-${mappedFromWrapper}-wrapper`,
+            componentId: mappedFromWrapper,
+            raw: sectionObj,
+            meta: { sourceIndex: sectionIndex, contentTypeUid: wrapperKey },
+          });
+          return;
+        }
+      }
       const componentId = 'GenericContent';
       result.push({
         key: `section-${sectionIndex}-${componentId}`,
