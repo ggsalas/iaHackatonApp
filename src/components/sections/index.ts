@@ -6,9 +6,11 @@ import { Brands } from './Brands';
 import { People } from './People';
 import { BlogPosts } from './BlogPosts';
 import { GenericContent } from './GenericContent';
+import { SocialProof } from './SocialProof';
 
 export const registry = {
   Features,
+  SocialProof,
   TrustBuilder,
   Testimonials,
   Brands,

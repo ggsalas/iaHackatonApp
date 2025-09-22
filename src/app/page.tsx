@@ -31,10 +31,14 @@ export default async function HomePage() {
         <div className="max-w-6xl mx-auto px-4 py-10 text-gray-600">No sections to render.</div>
       )}
       {hydrated.map((inst) => {
-        const Comp = getSectionComponent(inst.componentId);
         const baseRaw: any = inst.raw; // eslint-disable-line @typescript-eslint/no-explicit-any
         const hyd: any = inst.hydrated; // eslint-disable-line @typescript-eslint/no-explicit-any
         let merged = hyd ? { ...baseRaw, ...hyd } : baseRaw;
+
+        const componentId = inst.componentId;
+        const Comp = getSectionComponent(componentId);
+
+        // Preserve base expanded content if hydration only returned reference shells
         if (hyd && Array.isArray(baseRaw?.content) && Array.isArray(hyd?.content)) {
           const hydLooksLikeRefs = hyd.content.length > 0 && hyd.content.every((c: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
             const keys = Object.keys(c || {});
@@ -48,8 +52,16 @@ export default async function HomePage() {
             merged = { ...merged, content: baseRaw.content };
           }
         }
+
         return (
-          <div key={inst.key} className="border-b border-gray-100">
+          <div
+            key={inst.key}
+            className="border-b border-gray-100"
+            data-section-component={componentId}
+            data-raw-type={inst.meta?.contentTypeUid || ''}
+            data-variant={inst.meta?.variant || ''}
+            data-heading={(merged as any)?.heading || (merged as any)?.title || ''}
+          >
             <Comp raw={merged} />
           </div>
         );

@@ -8,6 +8,7 @@ export interface NormalizedSectionInstruction {
     sourceIndex: number;
     contentTypeUid?: string;
     inferred?: boolean;
+    variant?: string; // e.g. 'social_proof'
   };
 }
 
@@ -33,6 +34,32 @@ function collectContentTypeUids(node: unknown, out: { uid?: string; node: any }[
   Object.values(obj).forEach((v) => collectContentTypeUids(v, out));
 }
 
+// Heuristic detection for Social Proof style stat sections.
+// This was previously done at render time in page.tsx; moved upstream so that
+// downstream rendering can simply rely on componentId === 'SocialProof'.
+function looksLikeSocialProof(raw: any): boolean { // eslint-disable-line @typescript-eslint/no-explicit-any
+  if (!raw || typeof raw !== 'object') return false;
+  const headingStr = (raw.heading || raw.title || '').toString();
+  if (/social\s+proof/i.test(headingStr)) return true;
+  const candidateKeys = ['content','items','features','stats','list','entries'];
+  const candidateArrays: any[] = []; // eslint-disable-line @typescript-eslint/no-explicit-any
+  candidateKeys.forEach((k) => {
+    if (Array.isArray(raw[k]) && raw[k].length >= 3) candidateArrays.push(raw[k]);
+  });
+  if (!candidateArrays.length) return false;
+  // Prefer the longest array as likely the stat list
+  const items = candidateArrays.sort((a,b)=>b.length-a.length)[0];
+  let statLike = 0;
+  items.forEach((it: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
+    const num = (it?.preheading || it?.stat || it?.value || '').toString().trim();
+    const label = (it?.heading || it?.title || it?.label || '').toString().trim();
+    if (label && /^[\d,\s.+%]+$/.test(num) && num.replace(/[\,\s]/g,'').length > 0) statLike++;
+  });
+  if (!statLike) return false;
+  const threshold = Math.min(3, Math.ceil(items.length * 0.6));
+  return statLike >= threshold;
+}
+
 export function normalizePageSections(page: RawPageLike | null | undefined): NormalizedSectionInstruction[] {
   if (!page || !Array.isArray(page.sections)) return [];
   const result: NormalizedSectionInstruction[] = [];
@@ -40,7 +67,7 @@ export function normalizePageSections(page: RawPageLike | null | undefined): Nor
   page.sections.forEach((sectionWrapper: any, sectionIndex: number) => { // eslint-disable-line @typescript-eslint/no-explicit-any
     // Contentstack modular blocks: each element is an object with a single key naming the block type
     const blockKeys = Object.keys(sectionWrapper || {});
-    let sectionObj: any = sectionWrapper; // by default
+    let sectionObj: any = sectionWrapper; // eslint-disable-line @typescript-eslint/no-explicit-any
     let wrapperKey: string | undefined;
     if (blockKeys.length === 1) {
       wrapperKey = blockKeys[0];
@@ -53,37 +80,46 @@ export function normalizePageSections(page: RawPageLike | null | undefined): Nor
 
     if (collected.length === 0) {
       // If no embedded entries were discovered, attempt to map the wrapper key itself
+      let componentId: string | null = null;
+      let meta: NormalizedSectionInstruction['meta'] = { sourceIndex: sectionIndex, inferred: true };
       if (wrapperKey) {
         const mappedFromWrapper = mapContentType(wrapperKey);
         if (mappedFromWrapper) {
-          result.push({
-            key: `section-${sectionIndex}-${mappedFromWrapper}-wrapper`,
-            componentId: mappedFromWrapper,
-            raw: sectionObj,
-            meta: { sourceIndex: sectionIndex, contentTypeUid: wrapperKey },
-          });
-          return;
+          componentId = mappedFromWrapper;
+          meta = { sourceIndex: sectionIndex, contentTypeUid: wrapperKey };
         }
       }
-      const componentId = 'GenericContent';
+      if (!componentId) {
+        componentId = 'GenericContent';
+      }
+      // Apply Social Proof heuristic override
+      if ((componentId === 'Features' || componentId === 'GenericContent') && looksLikeSocialProof(sectionObj)) {
+        componentId = 'SocialProof';
+        meta.variant = 'social_proof';
+      }
       result.push({
-        key: `section-${sectionIndex}-${componentId}`,
+        key: `section-${sectionIndex}-${componentId}${meta.contentTypeUid ? '-wrapper' : ''}`,
         componentId,
         raw: sectionObj,
-        meta: { sourceIndex: sectionIndex, inferred: true },
+        meta,
       });
       return;
     }
 
     collected.forEach((c, i) => {
       if (!c.uid) return;
-      const mapped = mapContentType(c.uid);
+      let mapped = mapContentType(c.uid);
       if (!mapped) return; // ignored
+      const meta: NormalizedSectionInstruction['meta'] = { sourceIndex: sectionIndex, contentTypeUid: c.uid };
+      if ((mapped === 'Features' || mapped === 'GenericContent') && looksLikeSocialProof(c.node)) {
+        mapped = 'SocialProof';
+        meta.variant = 'social_proof';
+      }
       result.push({
         key: `section-${sectionIndex}-${mapped}-${i}`,
         componentId: mapped,
         raw: c.node,
-        meta: { sourceIndex: sectionIndex, contentTypeUid: c.uid },
+        meta,
       });
     });
   });
