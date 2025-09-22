@@ -13,16 +13,16 @@
 - Removed legacy Hero component (GenericContent now handles hero variant)
 - Implemented TrustBuilder component (dual images, signature block)
 - Fixed normalization to avoid flattening nested list items
+- Implemented Social Proof section + upstream heuristic variant detection
 
 ## Doing
 
-- Home Page Section 4 (Social Proof) – planning & component spec
+- (none current)
 - inc1 complete: include[] params added
 - Preparing inc2: fetch home page with deep includes to verify nested sections
 
 ## Next
 
-- Implement Social Proof stats component (decide variant detection vs new mapping)
 - Capabilities layout component design
 - Case Studies card list component design
 - Refactor Testimonials to styled quotes (grid or carousel)
