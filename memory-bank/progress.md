@@ -1,4 +1,4 @@
-# Progress (Updated: 2025-09-21)
+# Progress (Updated: 2025-10-02)
 
 ## Done
 
@@ -14,16 +14,14 @@
 - Implemented TrustBuilder component (dual images, signature block)
 - Fixed normalization to avoid flattening nested list items
 - Implemented Social Proof section + upstream heuristic variant detection
+- Implemented Capabilities component with panel layout and heuristic detection
 
 ## Doing
 
 - (none current)
-- inc1 complete: include[] params added
-- Preparing inc2: fetch home page with deep includes to verify nested sections
 
 ## Next
 
-- Capabilities layout component design
 - Case Studies card list component design
 - Refactor Testimonials to styled quotes (grid or carousel)
 - Refactor Logos into uniform responsive strip
@@ -33,3 +31,4 @@
 - cross1: Consolidate field extraction helpers
 - cross2: Extract design tokens from reference site
 - mb1: Log progress after each approved section refactor
+

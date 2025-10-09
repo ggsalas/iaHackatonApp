@@ -7,10 +7,12 @@ import { People } from './People';
 import { BlogPosts } from './BlogPosts';
 import { GenericContent } from './GenericContent';
 import { SocialProof } from './SocialProof';
+import { Capabilities } from './Capabilities';
 
 export const registry = {
   Features,
   SocialProof,
+  Capabilities,
   TrustBuilder,
   Testimonials,
   Brands,

@@ -53,11 +53,17 @@ function looksLikeSocialProof(raw: any): boolean { // eslint-disable-line @types
   items.forEach((it: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
     const num = (it?.preheading || it?.stat || it?.value || '').toString().trim();
     const label = (it?.heading || it?.title || it?.label || '').toString().trim();
-    if (label && /^[\d,\s.+%]+$/.test(num) && num.replace(/[\,\s]/g,'').length > 0) statLike++;
+    if (label && /^[\d,\s.+%]+$/.test(num) && num.replace(/[,\s]/g,'').length > 0) statLike++;
   });
   if (!statLike) return false;
   const threshold = Math.min(3, Math.ceil(items.length * 0.6));
   return statLike >= threshold;
+}
+
+function looksLikeCapabilities(raw: any): boolean { // eslint-disable-line @typescript-eslint/no-explicit-any
+  if (!raw || typeof raw !== 'object') return false;
+  if (raw.blueprint?.[0]?.view_name === 'Capability Panels') return true;
+  return false;
 }
 
 export function normalizePageSections(page: RawPageLike | null | undefined): NormalizedSectionInstruction[] {
@@ -97,6 +103,11 @@ export function normalizePageSections(page: RawPageLike | null | undefined): Nor
         componentId = 'SocialProof';
         meta.variant = 'social_proof';
       }
+      // Apply Capabilities heuristic override
+      if ((componentId === 'Features' || componentId === 'GenericContent') && looksLikeCapabilities(sectionObj)) {
+        componentId = 'Capabilities';
+        meta.variant = 'capabilities';
+      }
       result.push({
         key: `section-${sectionIndex}-${componentId}${meta.contentTypeUid ? '-wrapper' : ''}`,
         componentId,
@@ -114,6 +125,11 @@ export function normalizePageSections(page: RawPageLike | null | undefined): Nor
       if ((mapped === 'Features' || mapped === 'GenericContent') && looksLikeSocialProof(c.node)) {
         mapped = 'SocialProof';
         meta.variant = 'social_proof';
+      }
+      // Check capabilities on sectionObj (which has blueprint), not c.node
+      if ((mapped === 'Features' || mapped === 'GenericContent') && looksLikeCapabilities(sectionObj)) {
+        mapped = 'Capabilities';
+        meta.variant = 'capabilities';
       }
       result.push({
         key: `section-${sectionIndex}-${mapped}-${i}`,

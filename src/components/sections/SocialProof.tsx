@@ -20,7 +20,7 @@ interface SocialProofRaw { // eslint-disable-line @typescript-eslint/no-explicit
 
 function parseIntSafe(v: string | undefined): number | null {
   if (!v) return null;
-  const cleaned = v.replace(/[\,\s]/g, '');
+  const cleaned = v.replace(/[,\s]/g, '');
   if (!/^\d+(?:\.\d+)?$/.test(cleaned)) return null;
   const num = Number(cleaned);
   return Number.isFinite(num) ? num : null;
@@ -95,9 +95,6 @@ export function SocialProof({ raw }: { raw: SocialProofRaw }) { // eslint-disabl
               className="single-counter flex flex-col items-center text-center"
             >
               <div className="counter-img mb-4 w-20 h-20 flex items-center justify-center">
-                {/* Icon image */}
-                {/* Cycle local icons */}
-                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={localIcons[idx % localIcons.length]}
                   alt=""

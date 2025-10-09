@@ -5,6 +5,7 @@
 export type SectionComponentId =
   | 'Features'
   | 'SocialProof'
+  | 'Capabilities'
   | 'TrustBuilder'
   | 'Testimonials'
   | 'Brands'

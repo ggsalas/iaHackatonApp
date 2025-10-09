@@ -15,14 +15,14 @@ function renderRichBody(body: unknown) {
       return (
         <div
           className="prose prose-lg max-w-none text-gray-600"
-          // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{ __html: body }}
         />
       );
     }
+    const textBody: string = body;
     return (
       <div className="space-y-5 text-gray-600 text-lg">
-        {body.split(/\n\n+/).map((p, i) => (
+        {textBody.split(/\n\n+/).map((p: string, i: number) => (
           <p key={i}>{p}</p>
         ))}
       </div>
