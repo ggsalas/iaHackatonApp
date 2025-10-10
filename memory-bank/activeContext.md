@@ -2,8 +2,14 @@
 
 ## Current Goals
 
-- Working on the Techwix marketing website. We've initialized the Next.js project with TypeScript and App Router, and set up the basic project structure including the directory organization, page routes, and Contentstack integration foundation. Currently working on finalizing the Contentstack integration and preparing for the section component development.
+- Complete remaining Home Page sections (4–10): Social Proof, Capabilities, Case Studies, Testimonials, Logos, Team, Blog Feature.
+- Use Contentstack include[] deep expansion (`sections.section`, `.content`, `.blueprint`) to retrieve fully populated nested section data in a single server request.
+- Sequentially analyze each enriched section (s0–s8) against the reference site design and refactor components (pause after each for validation).
+
+## Constraints / Agreements
+
+- Do NOT perform git commits automatically going forward (user preference logged 2025-09-21). 
 
 ## Current Blockers
 
-- None yet
+- Await enriched fetch (inc2) to confirm actual field names for list-based sections before drafting precise refactor code.
